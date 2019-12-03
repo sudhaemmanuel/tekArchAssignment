@@ -2,7 +2,9 @@ package ResApiAssignment2;
 
 import com.jayway.restassured.response.Response;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,39 +21,50 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.restassured.path.json.JsonPath;
 import static com.jayway.restassured.RestAssured.*;
+import static org.testng.Assert.assertEquals;
 
 public class Title {
     @Test 
 	public  void getUserId() throws ParseException {
-    	//SoftAssert softAssert=new SoftAssert();
-    	//String expectedStatus="7";
+    	//SoftAssert softassert=new SoftAssert();
+        //int expected= 7;
 
     
-    String resp= given()
+    Response resp= given()
     	.when()
     	.get("https://jsonplaceholder.typicode.com/posts")
     	
     	.then()
-    	//.contentType(ContentType.JSON)
-    	.extract().response().asString();
-        System.out.println(resp);
-    	
-        JSONParser parse = new JSONParser(); 
-        JSONObject jobj = (JSONObject)parse.parse(resp); 
-        JSONObject posts =  (JSONObject) jobj.get("UserId");
-        System.out.println(posts);
-        
+    	.contentType("application/json")
+    	.extract().response();
+     
+       //String body= resp.getBody().asString();
+       //System.out.println(body);
+      
+       
+   List< HashMap<String, String>> jsonresp= resp.jsonPath().get("$");
+   for (int i =0; i<jsonresp.size();i++) {
+	   
+	   String userid = String.valueOf(jsonresp.get(i).get("userId"));
+	   System.out.println(userid);
+	  // softassert.assertEquals(userid, expected);
+	   if (userid.contentEquals("7")) 
+		   System.out.println(jsonresp.get(i).get("title"));
+	
+	   }
+    }
+}
+   
+   
+   
+   
+   
+//   for (Map.Entry<String, String> entry:jsonresp.entrySet())
+//    System.out.println("Key = " + entry.getKey() + 
+ //                                ", Value = " + entry.getValue());
     
-//        JSONObject jo = new JSONObject(jsonString); //
-//        JSONArray ja = jo.getJSONArray("id_list"); // get the JSONArray
-//        List<String> keys = new ArrayList<>();
-//        for(int i=0;i<ja.length();i++){
-//         keys.add(ja.getString(i)); // iterate the JSONArray and extract the keys
-//        }
-//        return keys;
-        }   
-      }
-
+    
+    
 
 
 
